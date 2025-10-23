@@ -122,3 +122,38 @@ async def get_avg_delay_by_station(table_name: str = "tgv-data", limit: int = 10
     except Exception as e:
         logger.error(f"Error getting average delays by station: {str(e)}")
         return {"error": str(e)}
+
+async def get_unique_stations_count_from_db(table_name: str = "tgv-data"):
+    """Get the total number of unique gare_depart stations for National service"""
+    if supabase is None:
+        logger.error("Supabase client not initialized")
+        return {"error": "Supabase client not initialized"}
+    
+    try:
+        # Fetch all gare_depart data for National service
+        result = supabase.table(table_name).select("gare_depart").execute()
+        
+        if not result.data:
+            logger.warning(f"No National service data found in table '{table_name}'")
+            return {
+                "unique_stations_count": 0,
+                "message": "No National service data found",
+                "service_filter": "National"
+            }
+        
+        # Convert to pandas DataFrame and get unique count
+        df = pd.DataFrame(result.data)
+        unique_count = df['gare_depart'].nunique()
+        
+        logger.info(f"Found {unique_count} unique stations for National service in table '{table_name}'")
+        
+        return {
+            "unique_stations_count": unique_count,
+            "total_records": len(result.data),
+            "table_name": table_name,
+            "service_filter": "National"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting unique stations count: {str(e)}")
+        return {"error": str(e)}
