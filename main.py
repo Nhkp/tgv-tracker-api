@@ -30,9 +30,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:8002", "http://localhost:5173", "http://localhost:8080",
                 "http://172.19.0.3:8002", "http://172.19.0.3:5173", "http://172.19.0.3:8080",
-                "https://tgv-transit-tally.vercel.app/"],
+                "https://tgv-transit-tally.vercel.app",
+                "https://tgv-transit-tally-git-main-palezisc-gmailcoms-projects.vercel.app",
+                "https://tgv-transit-tally-lnlm52m39-palezisc-gmailcoms-projects.vercel.app"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
