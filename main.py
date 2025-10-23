@@ -1,11 +1,11 @@
 import logging
 import sys
 import time
-from fastapi import FastAPI, Query
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Query # type: ignore
+from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from typing import Literal
 
-from supabase_utils import initialize_supabase, get_table_info, check_table_exists, get_avg_delay_by_station
+from supabase_utils import initialize_supabase, get_table_info, check_table_exists, get_avg_delay_by_station, get_unique_stations_count_from_db
 
 
 logging.basicConfig(
@@ -92,4 +92,24 @@ async def get_delays(
         "description": f"Top {limit} {order_description} stations",
         "result": result
     }
+
+@app.get("/api/stations/count")
+async def get_unique_stations_count(
+    table_name: str = Query(default="tgv-data", description="Table name to query")
+):
+    """Get the total number of unique gare_depart stations"""
+    logger.info(f"Unique stations count endpoint accessed - table: {table_name}")
     
+    start_time = time.time()
+    result = await get_unique_stations_count_from_db(table_name)
+    end_time = time.time()
+    
+    execution_time = round((end_time - start_time) * 1000, 2)
+    
+    logger.info(f"Unique stations count query executed in {execution_time}ms")
+    
+    return {
+        "execution_time_ms": execution_time,
+        "table_name": table_name,
+        "result": result
+    }
