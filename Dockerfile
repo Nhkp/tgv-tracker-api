@@ -12,7 +12,7 @@ build-essential \
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 ENV UV_PYTHON=3.12
 
-COPY ./api/pyproject.toml ./api/uv.lock* ./
+COPY ./pyproject.toml ./uv.lock* ./
 
 RUN uv sync --frozen --no-dev
 
